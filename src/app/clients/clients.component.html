@@ -1,6 +1,13 @@
 <div class="clients">
+  <div *ngIf="!clients" class="loading">
+    Loading clients information...
+  </div>
 
+  <app-clients-filter [clients]="clients" (setClients)="setFilteredClients"></app-clients-filter>
 
-CLIENTS...
-
+  <ul *ngFor="let client of clients">
+    <li>
+      <app-client [client]="client"></app-client>
+    </li>
+  </ul>
 </div>
