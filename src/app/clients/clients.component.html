@@ -5,8 +5,8 @@
 
   <app-clients-filter [clients]="clients" (setClients)="setFilteredClients"></app-clients-filter>
 
-  <ul *ngFor="let client of clients">
-    <li>
+  <ul>
+    <li *ngFor="let client of clients">
       <app-client [client]="client"></app-client>
     </li>
   </ul>

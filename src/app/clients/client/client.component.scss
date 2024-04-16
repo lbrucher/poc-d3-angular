@@ -1,0 +1,28 @@
+div.client {
+  width:100%;
+  min-height: 300px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-bottom: 8px;
+
+  .client-info {
+    height:100px;
+    xmargin-bottom:-110px;
+    border:1px solid green;
+
+    .name {
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
+
+    .address,
+    .dob {
+      font-size: 75%;
+    }
+  }
+
+  .account-balances {
+    height:200px;
+    border:1px solid blue;
+  }
+}

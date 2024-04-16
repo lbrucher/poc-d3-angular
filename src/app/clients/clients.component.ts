@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Client } from '../models/client';
 import { ClientsFilterComponent } from './clients-filter.component';
 import { CommonModule } from '@angular/common';
-import { ClientComponent } from './client.component';
+import { ClientComponent } from './client/client.component';
 import { ClientsService } from '../services/clients.service';
 
 @Component({

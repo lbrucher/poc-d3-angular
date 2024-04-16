@@ -1,0 +1,18 @@
+<div class="client row g-0">
+
+  <div class="col-5">
+    <div class="client-info">
+      <div class="name">{{getClientName()}}</div>
+      <div class="address" *ngIf="client.address">{{client.address}}</div>
+      <div class="dob" *ngIf="hasDoB()">Born on {{getClientDoB()}}</div>
+    </div>
+  
+    <div class="account-balances">
+      account balances
+    </div>
+  </div>
+
+  <div class="col accounts">
+    CHART
+  </div>
+</div>
