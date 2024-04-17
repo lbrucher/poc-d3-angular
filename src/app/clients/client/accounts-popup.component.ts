@@ -18,5 +18,7 @@ export class AccountsPopupComponent {
   @Input('accounts') accounts!: Account[];
   @Input('clientName') clientName!: string;
 
-
+  getCreationDate(account:Account){
+    return new Date(account.created).toLocaleString();
+  }
 }
