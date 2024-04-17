@@ -121,8 +121,8 @@ export class AccountsChartComponent implements AfterViewInit {
 
     // Y Scale
     const balances = this.accounts.map(a => a.balance);
-    var max_value = Math.max(...balances);
-    var min_value = Math.min(...balances);
+    var max_value = Math.max(0, ...balances);
+    var min_value = Math.min(0, ...balances);
     this.y = d3.scaleLinear()
               .domain([min_value, max_value])
               .range([this.chartElement.nativeElement.clientHeight-this.margins.bottom, this.margins.top]);
