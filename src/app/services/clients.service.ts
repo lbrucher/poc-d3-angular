@@ -12,10 +12,10 @@ export class ClientsService {
   getClients(): Observable<Client[]> {
     return new Observable<Client[]>(sub => {
       setTimeout(() => {
-//        sub.next(this.clients);
+        sub.next(this.clients);
 //        sub.next(this.clients.slice(6,7));
 //        sub.next(this.clients.slice(1,2));
-        sub.next(this.clients.slice(0,9));
+//        sub.next(this.clients.slice(0,9));
       }, 500);
     });
   }

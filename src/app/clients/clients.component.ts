@@ -17,22 +17,24 @@ import { ClientsService } from '../services/clients.service';
   styleUrl: './clients.component.scss'
 })
 export class ClientsComponent implements OnInit {
-  clients: Client[] | null;
-
+  clients: Client[] = [];
+  filteredClients: Client[] = [];
+  loadingClient: boolean = true;
 
   constructor(private clientService: ClientsService) {
-    this.clients = null;
+//    this.clients = null;
   }
 
   ngOnInit(): void {
     this.clientService.getClients().subscribe(clients => {
-      this.clients = clients;
+      this.clients = clients || [];
+      this.filteredClients = this.clients.slice(0);
+      this.loadingClient = false;
     });
   }
 
 
   setFilteredClients(clients: Client[]) {
-
+    this.filteredClients = clients||[];
   }
-
 }

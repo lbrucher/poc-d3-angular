@@ -1,13 +1,19 @@
 <div class="clients">
-  <div *ngIf="!clients" class="loading">
+  <div *ngIf="loadingClient" class="loading">
     Loading clients information...
   </div>
+  <div *ngIf="!loadingClient">
+    <div class="row">
+      <div class="col-6">
+        <app-clients-filter [clients]="clients" (setClients)="setFilteredClients($event)"></app-clients-filter>
+      </div>
+      <div class="col-6 showing-clients">Showing {{filteredClients.length}} of {{clients.length}} clients </div>
+    </div>
 
-  <app-clients-filter [clients]="clients" (setClients)="setFilteredClients"></app-clients-filter>
-
-  <ul>
-    <li *ngFor="let client of clients">
-      <app-client [client]="client"></app-client>
-    </li>
-  </ul>
+    <ul>
+      <li *ngFor="let client of filteredClients">
+        <app-client [client]="client"></app-client>
+      </li>
+    </ul>
+  </div>
 </div>

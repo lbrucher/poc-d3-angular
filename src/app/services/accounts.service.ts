@@ -8,8 +8,6 @@ import { Account } from '../models/account';
 export class AccountsService {
   private allAccounts: Account[] | null = null;
 
-  //  constructor() { }
-
   private fetchAccounts(): Observable<Account[]> {
     if (!!this.allAccounts) {
 console.log("FetchAccounts: all accounts already loaded");
@@ -18,7 +16,12 @@ console.log("FetchAccounts: all accounts already loaded");
     else {
 console.log("FetchAccounts: LOADING all accounts...");
       this.allAccounts = this._accounts;
-      return new Observable<Account[]>(sub => sub.next(this.allAccounts || []));
+      return new Observable<Account[]>(sub => {
+        // setTimeout(()=>{
+        //   sub.next(this.allAccounts || [])
+        // }, 0);
+        sub.next(this.allAccounts || [])
+      });
     }
   }
 
