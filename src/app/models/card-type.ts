@@ -1,5 +1,5 @@
-export enum CardType {
-  VISA = "VISA",
-  MASTERCARD = "MasterCard",
-  AMEX = "American Express",
-}
+export const CardTypes = [
+  "VISA",
+  "MasterCard",
+  "American Express",
+];

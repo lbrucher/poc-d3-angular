@@ -1,11 +1,15 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Client } from '../../models/client';
+import { AccountsChartComponent } from './accounts-chart.component';
 
 @Component({
   selector: 'app-client',
   standalone: true,
-  imports: [CommonModule],
+  imports: [
+    CommonModule,
+    AccountsChartComponent,
+  ],
   templateUrl: './client.component.html',
   styleUrl: './client.component.scss'
 })

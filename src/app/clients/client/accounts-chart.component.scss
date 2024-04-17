@@ -1,0 +1,25 @@
+.account-chart-container {
+  overflow-x: scroll;
+
+  .account-chart {
+    width:100%;
+    height:260px;
+  }
+
+  .account-chart-legend {
+    text-align: center;
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    font-size: 9pt;
+
+    span, span>input {
+      cursor: pointer;
+    }
+  }
+  
+  .legend-box {
+    display: inline-block;
+    width:16px;
+    height:14px;
+    margin: 0 16px 0 4px;
+  }
+}
