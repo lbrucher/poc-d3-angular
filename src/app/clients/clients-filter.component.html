@@ -1,6 +1,6 @@
 <div *ngIf="clients" class="dropdown">
   <div class="btn-group" role="group">
-    <input class="" size="16" type="text" [(ngModel)]="inputText" (keypress)="inputTextKeyPressed($event)">
+    <input placeholder="Filter clients..." size="16" type="text" [(ngModel)]="inputText" (keypress)="inputTextKeyPressed($event)">
     <div class="btn-group" role="group">
       <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
         <span class="caret"></span>

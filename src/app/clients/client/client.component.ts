@@ -22,8 +22,8 @@ class BalanceRepartitions {
     const countPos = accounts.filter(a => a.balance >= 0).length;
     const countNeg = accounts.length - countPos;
 
-    this.positive = new BalanceRep(accounts.length===0?0:countPos/accounts.length*100, countPos);
-    this.negative = new BalanceRep(accounts.length===0?0:countNeg/accounts.length*100, countNeg);
+    this.positive = new BalanceRep(accounts.length===0?0:countPos/accounts.length, countPos);
+    this.negative = new BalanceRep(accounts.length===0?0:countNeg/accounts.length, countNeg);
   }
 }
 

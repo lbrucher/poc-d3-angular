@@ -55,18 +55,9 @@ export class AccountsChartComponent implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    // this.accountService.getAccounts(this.client.accounts).subscribe(accounts => {
-    //   this.accounts = accounts;
-    //   //this.selectedAccounts = this.accounts.slice(0);
-    //   this.createChart();
-    //   this.drawAxis();
-    //   this.drawBars(this.accounts);
-    // });
-
     this.createChart();
     this.drawAxis();
     this.drawBars(this.accounts);
-
   }
 
 
@@ -117,7 +108,7 @@ export class AccountsChartComponent implements AfterViewInit {
 
     // Set the width of the chart to whatever size we do need.
     // If this width becomes larger than its parent container, this one has an overflow setup to scroll horizontally
-    const innerChartWidth = this.accounts.length* (this.barWidth+10);
+    const innerChartWidth = this.accounts.length > 0 ? this.accounts.length*(this.barWidth+10) : this.margins.left;
     this.chartElement.nativeElement.style.width = (innerChartWidth+this.margins.left+this.margins.right)+'px';
 
     // X Scale
