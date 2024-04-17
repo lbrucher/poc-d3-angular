@@ -1,5 +1,5 @@
 <div class="account-chart-container">
-  <div #accountChart class="account-chart"></div>
+  <div #accountChart class="account-chart" (click)="onChartClicked()"></div>
   <div class="account-chart-legend">
     <span *ngFor="let item of this.legendItems" (click)="selectCardType(item.type, $event)" class="legend-item">
       <input type="checkbox" checked /> {{item.type}}<div class="legend-box" [ngStyle]="{'background-color': item.color}"></div>

@@ -1,9 +1,8 @@
-import { AfterViewInit, Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import * as d3 from 'd3';
 import { Client } from '../../models/client';
 import { Account } from '../../models/account';
-import { AccountsService } from '../../services/accounts.service';
 import { CardTypes } from '../../models/card-type';
 
 class LegendItem {
@@ -24,9 +23,9 @@ class LegendItem {
 })
 export class AccountsChartComponent implements AfterViewInit {
   @Input('client') client!: Client;
+  @Input('accounts') accounts!: Account[];
+  @Output('chartClicked') chartClicked = new EventEmitter();
   @ViewChild('accountChart') chartElement!: ElementRef;
-
-  private accounts: Account[] = [];
 
   private svg: any;
   private x: any;   // x scale
@@ -46,7 +45,7 @@ export class AccountsChartComponent implements AfterViewInit {
   legendItems: LegendItem[] = [];
 
 
-  constructor(private accountService: AccountsService) {
+  constructor() {
     const colors = this.allCardTypeColors.slice(0);
     for (const type of CardTypes) {
       this.cardTypeColors[type] = colors.shift();
@@ -56,13 +55,17 @@ export class AccountsChartComponent implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.accountService.getAccounts(this.client.accounts).subscribe(accounts => {
-      this.accounts = accounts;
-      //this.selectedAccounts = this.accounts.slice(0);
-      this.createChart();
-      this.drawAxis();
-      this.drawBars(this.accounts);
-    });
+    // this.accountService.getAccounts(this.client.accounts).subscribe(accounts => {
+    //   this.accounts = accounts;
+    //   //this.selectedAccounts = this.accounts.slice(0);
+    //   this.createChart();
+    //   this.drawAxis();
+    //   this.drawBars(this.accounts);
+    // });
+
+    this.createChart();
+    this.drawAxis();
+    this.drawBars(this.accounts);
 
   }
 
@@ -101,6 +104,10 @@ export class AccountsChartComponent implements AfterViewInit {
     this.drawBars(accounts);
   }
   
+
+  onChartClicked() {
+    this.chartClicked.emit();
+  }
 
   private createChart() {
     this.svg = d3.select(this.chartElement.nativeElement)

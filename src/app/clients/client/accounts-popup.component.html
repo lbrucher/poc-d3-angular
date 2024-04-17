@@ -1,0 +1,31 @@
+<div class="modal-header">
+  <h5 class="modal-title">{{clientName}}</h5>
+  <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
+</div>
+<div class="modal-body">
+  <div class="container-fluid">
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">Account #</th>
+          <th scope="col">Type</th>
+          <th scope="col">Balance</th>
+          <th scope="col">Created On</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let account of accounts">
+          <td>{{account.number}}</td>
+          <td>{{account.card_type}}</td>
+          <td>{{account.balance}}</td>
+          <td>{{account.created}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+<!-- <div class="modal-footer">
+  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+</div> -->
