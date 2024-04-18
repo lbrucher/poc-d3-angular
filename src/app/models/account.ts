@@ -1,5 +1,3 @@
-//import { CardType } from "./card-type";
-
 export class Account {
   id: string;
   card_type: string;

@@ -14,6 +14,8 @@ class BalanceRep {
     this.count = count;
   }
 }
+
+// Expose the # of positive and negative account balances
 class BalanceRepartitions {
   positive: BalanceRep;
   negative: BalanceRep;

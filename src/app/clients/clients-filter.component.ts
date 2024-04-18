@@ -25,13 +25,15 @@ export class ClientsFilterComponent {
 
   inputTextKeyPressed(event:any){
     if (event.key === 'Enter'){
-      if (this._clients == null){
-        return;
+      if (this._clients != null){
+        this.filterClients(this.inputText);
       }
-  
-      const lowText = this.inputText.toLowerCase();
-      const clients = this._clients.filter(c => `${c.firstname||''} ${c.name}`.toLowerCase().includes(lowText))
-      this.setClients.emit(clients);
     }
+  }
+
+  filterClients(text: string) {
+    const lowText = text.toLowerCase();
+    const clients = this._clients.filter(c => `${c.firstname||''} ${c.name}`.toLowerCase().includes(lowText))
+    this.setClients.emit(clients);
   }
 }

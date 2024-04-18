@@ -9,9 +9,6 @@
   
     <div class="account-balances" *ngIf="balancesRep.negative.count>0">
       <div [ngStyle]="{'color': balancesRep.negative.count>0?'#AA3333':''}">{{balancesRep.negative.count}} account{{balancesRep.negative.count > 1 ? 's':''}} {{balancesRep.negative.count > 1 ? 'have':'has'}} a negative balance ({{balancesRep.negative.percent|percent}})</div>
-      <!-- <div class="ab-title">Account balance repartition:</div>
-      <div class="ab-positive">- Positive balances: {{balancesRep.positive.percent}}% ({{balancesRep.positive.count}} accounts)</div>
-      <div class="ab-negative">- Negative balances: {{balancesRep.negative.percent}}% ({{balancesRep.negative.count}} accounts)</div> -->
     </div>
 
     <div class="account-details">

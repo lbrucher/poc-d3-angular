@@ -118,8 +118,8 @@ export class AccountsChartComponent implements AfterViewInit {
 
     // Y Scale
     const balances = this.client.accounts.map(a => a.balance);
-    var max_value = Math.max(0, ...balances);
-    var min_value = Math.min(0, ...balances);
+    var max_value = Math.max(0, ...balances);   // if all balances are negative, make sure 0 is the max
+    var min_value = Math.min(0, ...balances);   // if all balances are positive, make sure 0 is the min
     this.y = d3.scaleLinear()
               .domain([min_value, max_value])
               .range([this.chartElement.nativeElement.clientHeight-this.margins.bottom, this.margins.top]);
@@ -131,6 +131,7 @@ export class AccountsChartComponent implements AfterViewInit {
       .attr("class", "xaxis")
       .attr("transform", `translate(0,${this.y(0)})`)
       .call(d3.axisBottom(this.x).tickSize(0).tickPadding(6))
+      // ensure negative bars have their labels above the axis line
       .call((g:any) => g.selectAll(".tick text")
                   .filter((_:any, i:number) => this.client.accounts[i].balance < 0)
                   .attr("transform", "translate(0,-20)"));
@@ -148,7 +149,6 @@ export class AccountsChartComponent implements AfterViewInit {
   }
   
   private barColor(account: Account) {
-    //console.log("BAR COLOR: ",account);
     return this.cardTypeColors[account.card_type]||this.unknownCardTypeColor;
   }
   
@@ -178,24 +178,24 @@ export class AccountsChartComponent implements AfterViewInit {
       .delay((_:any,i:number) => i*100);
   
     
-    if (reason === 'neg-balanaces-over') {
-      this.svg.selectAll("rect.bar")
-        .transition()
-        .duration(500)
-        .attr("fill", (account:Account) => account.balance < 0 ? this.barColor(account) : "#f0f0f0");
-    }
-    else if (reason === 'pos-balanaces-over') {
-      this.svg.selectAll("rect.bar")
-        .transition()
-        .duration(500)
-        .attr("fill", (account:Account) => account.balance > 0 ? this.barColor(account) : "#f0f0f0");
-    }
-    else if (reason === 'reset-balanaces') {
-      this.svg.selectAll("rect.bar")
-        .transition()
-        .duration(500)
-        .attr("fill", (account:Account) => this.barColor(account));
-    }
+    // if (reason === 'neg-balanaces-over') {
+    //   this.svg.selectAll("rect.bar")
+    //     .transition()
+    //     .duration(500)
+    //     .attr("fill", (account:Account) => account.balance < 0 ? this.barColor(account) : "#f0f0f0");
+    // }
+    // else if (reason === 'pos-balanaces-over') {
+    //   this.svg.selectAll("rect.bar")
+    //     .transition()
+    //     .duration(500)
+    //     .attr("fill", (account:Account) => account.balance > 0 ? this.barColor(account) : "#f0f0f0");
+    // }
+    // else if (reason === 'reset-balanaces') {
+    //   this.svg.selectAll("rect.bar")
+    //     .transition()
+    //     .duration(500)
+    //     .attr("fill", (account:Account) => this.barColor(account));
+    // }
   }
   
 }
