@@ -54,18 +54,24 @@ export class ClientsService {
       //   });
       // }
 
-      this.http.get<ClientRaw[]>(this.makeUrl('/clients')).subscribe(rawClients => {
-        console.log("RawClients: ", rawClients);
-        this.http.get<Account[]>(this.makeUrl('/accounts')).subscribe(accounts => {
-          console.log("All accounts: ", accounts);
+      this.http.get<ClientRaw[]>(this.makeUrl('/clients')).subscribe({
+        next: (rawClients) => {
+          console.log("RawClients: ", rawClients);
+          this.http.get<Account[]>(this.makeUrl('/accounts')).subscribe({
+            next: (accounts) => {
+              console.log("All accounts: ", accounts);
 
-          const clients: Client[] = rawClients.map<Client>(c => {
-            const clientAccounts = accounts.filter(account => c.accounts.includes(account.id));
-            return new Client(c.id, c.name, c.firstname, c.address, c.created, c.birthday, clientAccounts);
+              const clients: Client[] = rawClients.map<Client>(c => {
+                const clientAccounts = accounts.filter(account => c.accounts.includes(account.id));
+                return new Client(c.id, c.name, c.firstname, c.address, c.created, c.birthday, clientAccounts);
+              });
+
+              sub.next(clients);
+            },
+            error: (err) => sub.error(err)
           });
-
-          sub.next(clients);
-        });
+        },
+        error: (err) => sub.error(err)
       });
     });
   }

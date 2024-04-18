@@ -22,15 +22,23 @@ export class ClientsComponent implements OnInit {
   clients: Client[] = [];
   filteredClients: Client[] = [];
   loadingClient: boolean = true;
+  loadError: string|null = null;
 
   constructor(private clientService: ClientsService) {
   }
 
   ngOnInit(): void {
-    this.clientService.getClients().subscribe(clients => {
-      this.clients = clients || [];
-      this.filteredClients = this.clients.slice(0);
-      this.loadingClient = false;
+    this.loadError = null;
+    this.clientService.getClients().subscribe({
+      next: (clients) => {
+        this.clients = clients || [];
+        this.filteredClients = this.clients.slice(0);
+        this.loadingClient = false;
+      },
+      error: (err) => {
+        this.loadError = err.message;
+        this.loadingClient = false;
+      }
     });
   }
 

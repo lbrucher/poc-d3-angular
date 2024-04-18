@@ -3,7 +3,8 @@
     Loading clients information...
     <div class="spinner-grow spinner-grow-sm text-secondary"></div>
   </div>
-  <div *ngIf="!loadingClient">
+  <div *ngIf="loadError" class="load-error">There was an error loading client data: <pre>{{loadError}}</pre></div>
+  <div *ngIf="!loadingClient && !loadError" class="content">
     <div class="row">
       <div class="col-6">
         <app-clients-filter [clients]="clients" (setClients)="setFilteredClients($event)"></app-clients-filter>
