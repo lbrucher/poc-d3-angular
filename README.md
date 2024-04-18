@@ -1,27 +1,45 @@
 # POCFELaurentB
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.3.4.
+## Techs
 
-## Development server
+* Angular v17
+* Bootstrap
+* E2E: Puppeteer
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
 
-## Code scaffolding
+## Commands
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+Setup:
+```
+$ npm install
+```
 
-## Build
+Run locally:
+```
+$ npm start
+```
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+Run unit tests:
+```
+$ npm test
+```
 
-## Running unit tests
+Run e2e tests:
+```
+$ npm run e2e
+```
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
 
-## Running end-to-end tests
+# Deviation from the original description
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+* Display of client info (id, name, etc.)
+* Removed pie chart, display name in red for clients with one or more accounts with a negative balance
+* Added nav bar
+* Display the amount of listed and total clients
 
-## Further help
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+# Possible Improvements
+
+* Card types and their color should come from the backend
+* Add pagination when listing clients. Would have an effect on the client service and the API 
+* Refactor API exposed by backend into an API tailored for the frontend. E.g. an endpoint that returns all the info we need at once: clients, accounts and card types. This way only 1 roundtrip.
