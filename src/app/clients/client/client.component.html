@@ -10,13 +10,10 @@
     <div class="account-balances" *ngIf="balancesRep.negative.count>0">
       <div [ngStyle]="{'color': balancesRep.negative.count>0?'#AA3333':''}">{{balancesRep.negative.count}} account{{balancesRep.negative.count > 1 ? 's':''}} {{balancesRep.negative.count > 1 ? 'have':'has'}} a negative balance ({{balancesRep.negative.percent|percent}})</div>
     </div>
-
-    <div class="account-details">
-      <button type="button" class="btn btn-sm btn-secondary" (click)="showAccountDetails()">Account Details...</button>
-    </div>
   </div>
 
   <div class="col accounts">
+    <div class=" account-details" (click)="showAccountDetails()">Account Details...</div>
     <app-accounts-chart [client]="client" (chartClicked)="onChartClicked()"></app-accounts-chart>
   </div>
 </div>
