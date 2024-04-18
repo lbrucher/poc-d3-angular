@@ -6,6 +6,7 @@ import { Account } from '../../models/account';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AccountsPopupComponent } from './accounts-popup.component';
 import { CardType } from '../../models/card-type';
+import { ChartData } from '../chart-data';
 
 class BalanceRep {
   percent: number;
@@ -42,7 +43,9 @@ class BalanceRepartitions {
 export class ClientComponent {
   balancesRep: BalanceRepartitions = new BalanceRepartitions([]);
 
-  @Input('cardTypes') cardTypes!: CardType[];
+  @Input('chartData') chartData!: ChartData;
+
+  accountsToShow: Account[] = [];
 
   private _client!: Client;
   @Input('client')
@@ -50,10 +53,25 @@ export class ClientComponent {
   set client(client: Client) {
     this._client = client;
     this.balancesRep = new BalanceRepartitions(client.accounts);
+    this.buildAccountsToShow();
   }
 
+  private _cardTypes!: CardType[];
+  @Input('cardTypes')
+  get cardTypes(): CardType[] { return this._cardTypes; }
+  set cardTypes(types: CardType[]) {
+    this._cardTypes = types;
+    this.buildAccountsToShow();
+  }
 
   constructor(private modalService: NgbModal){
+  }
+
+  private buildAccountsToShow() {
+    if (!!this._client && !!this._cardTypes) {
+      const types = this._cardTypes.map(ct => ct.name);
+      this.accountsToShow = this._client.accounts.filter(a => types.includes(a.card_type));
+    }
   }
 
   getClientName(): string {
@@ -75,9 +93,12 @@ export class ClientComponent {
   }
 
   showAccountDetails() {
-    const modalRef = this.modalService.open(AccountsPopupComponent, {size:'lg'});
-    modalRef.componentInstance.client = this.client;
-    modalRef.componentInstance.clientName = this.getClientName();
+    // Skip if there are no accounts to show
+    if (this.accountsToShow.length > 0){
+      const modalRef = this.modalService.open(AccountsPopupComponent, {size:'lg'});
+      modalRef.componentInstance.client = this.client;
+      modalRef.componentInstance.clientName = this.getClientName();
+    }
   }
 
   onChartClicked() {

@@ -6,15 +6,20 @@
   <div *ngIf="loadError" class="load-error">There was an error loading client data: <pre>{{loadError}}</pre></div>
   <div *ngIf="!loadingClient && !loadError" class="content">
     <div class="row">
-      <div class="col-6">
+      <div class="col-3">
         <app-clients-filter [clients]="clients" (setClients)="setFilteredClients($event)"></app-clients-filter>
       </div>
-      <div class="col-6 showing-clients">Showing {{filteredClients.length}} of {{clients.length}} clients </div>
+      <div class="col-7 align-self-center account-chart-legend">
+        <span *ngFor="let item of accountsChartLegendItems" (click)="selectCardType(item.type, $event)" class="legend-item">
+          <input type="checkbox" checked /> {{item.type}}<div class="legend-box" [ngStyle]="{'background-color': item.color}"></div>
+        </span>
+      </div>
+      <div class="col-2 align-self-center showing-clients">Showing {{filteredClients.length}} of {{clients.length}} clients </div>
     </div>
 
     <ul>
       <li *ngFor="let client of filteredClients">
-        <app-client [client]="client" [cardTypes]="cardTypes"></app-client>
+        <app-client [client]="client" [cardTypes]="selectedCardTypes" [chartData]="barChartData"></app-client>
       </li>
     </ul>
   </div>

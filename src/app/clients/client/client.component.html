@@ -1,6 +1,6 @@
 <div class="client row g-0">
 
-  <div class="col-5">
+  <div class="col-3">
     <div class="client-info">
       <div *ngIf="balancesRep.negative.count == 0" class="name">{{getClientName()}}</div>
       <div *ngIf="balancesRep.negative.count > 0" class="name error" title="{{balancesRep.negative.count}} account{{balancesRep.negative.count > 1 ? 's':''}} {{balancesRep.negative.count > 1 ? 'have':'has'}} a negative balance ({{balancesRep.negative.percent|percent}})">
@@ -16,7 +16,7 @@
   </div>
 
   <div class="col accounts">
-    <div class=" account-details" (click)="showAccountDetails()">Account Details...</div>
-    <app-accounts-chart [client]="client" [cardTypes]="cardTypes" (chartClicked)="onChartClicked()"></app-accounts-chart>
+    <div *ngIf="accountsToShow.length > 0" class=" account-details" (click)="showAccountDetails()">Account Details...</div>
+    <app-accounts-chart [client]="client" [cardTypes]="cardTypes" [chartData]="chartData" [accounts]="accountsToShow" (chartClicked)="onChartClicked()"></app-accounts-chart>
   </div>
 </div>

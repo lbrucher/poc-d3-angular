@@ -4,15 +4,8 @@ import * as d3 from 'd3';
 import { Client } from '../../models/client';
 import { Account } from '../../models/account';
 import { CardType } from '../../models/card-type';
+import { ChartData } from '../chart-data';
 
-class LegendItem {
-  type: string;
-  color: string;
-  constructor(type:string, color:string){
-    this.type=type;
-    this.color=color;
-  }
-}
 
 @Component({
   selector: 'app-accounts-chart',
@@ -23,76 +16,82 @@ class LegendItem {
 })
 export class AccountsChartComponent implements AfterViewInit {
   @Input('client') client!: Client;
-  @Input('cardTypes') cardTypes!: CardType[];
+  @Input('chartData') chartData!: ChartData;
   @Output('chartClicked') chartClicked = new EventEmitter();
   @ViewChild('accountChart') chartElement!: ElementRef;
 
+  private _accounts!: Account[];
+  @Input('accounts')
+  get accounts(): Account[] { return this._accounts; }
+  set accounts(accounts:Account[]) {
+    const initial = this._accounts == null;
+    this._accounts = accounts;
+    // only perform updates once the component has been fully initialized
+    if (!initial){
+      this.updateChart();
+    }
+  }
+
+  @Input('cardTypes')
+  set cardTypes(cardTypes:CardType[]) {
+    this.cardTypeColors = {};
+    for(const ct of cardTypes){
+      this.cardTypeColors[ct.name] = ct.color;
+    }
+  }
+
+  
   private svg: any;
   private x: any;   // x scale
   private y: any;   // y scale
 
-
-  private margins = {top:30, right:10, bottom:20, left:50};
-  private barWidth = 100;
+  private margins = {top:30, right:30, bottom:30, left:30};
+  private barWidth = 50;
   
   private unknownCardTypeColor = '#999';
   private cardTypeColors: any = {};
-  
-  private selectedCardTypes: any = {};
-  
-  legendItems: LegendItem[] = [];
 
 
   ngAfterViewInit(): void {
-    for(const ct of this.cardTypes||[]){
-      this.cardTypeColors[ct.name] = ct.color;
-      this.selectedCardTypes[ct.name] = true;  // all types selected by default
-      this.legendItems.push(new LegendItem(ct.name, ct.color));
-    }
-
     this.createChart();
-    this.drawAxis();
-    this.drawBars(this.client.accounts);
   }
-
-
-  selectCardType(cardType:string, event:any) {
-    console.log("SELECT: ", cardType, event, event.srcElement);
-
-    // toggle the current selection
-    this.selectedCardTypes[cardType] = !this.selectedCardTypes[cardType];
-    
-    // Find the <input> element corresponding to the item we clicked on so that we can properly set its check/uncheck state
-    // When we click on the <input>, the state changes but it does not when we click outside of the <input>.
-    // This is why we override the <input> state so it's accurate on all circumstances.
-    // First find the <span> element corresponding to the legend item
-    let el = event.target;
-    while(el.className !== 'legend-item') {
-      el = el.parentElement;
-    }
-    // Then find the child <input> element underneath the <span>
-    const elInput:any = Array.from(el.childNodes).find((e:any) => e.nodeName === 'INPUT');
-
-    // Correclty set the <input> state
-    elInput.checked = this.selectedCardTypes[cardType];
-
-    // Rebuild the list of accounts to display
-    const accounts = this.client.accounts.filter(a => this.selectedCardTypes[a.card_type]);
-
-//TODO not properly redrawn... 
-    this.x.domain(accounts.map(a => a.number.toString()))
-    this.svg
-      .selectAll(".xaxis")
-      .transition()
-      .duration(500)
-      .call(d3.axisBottom(this.x));
-  
-    this.drawBars(accounts);
-  }
-  
 
   onChartClicked() {
     this.chartClicked.emit();
+  }
+
+  private getChartInnerHeight(){
+    // this (barWidth+10) sucks. prolly why the bar gets thinner when it's the unique one to draw on the chart...
+//    return this.accounts.length*(this.barWidth+10);
+    return this.accounts.length*this.barWidth;
+  }
+  
+  private adjustChartHeight(chartInnerHeight: number) {
+    // Adjust the englobing <div>'s height so that the entire chart can be seen
+    // We max it out at 400px with a scroll overflow.
+    const height = chartInnerHeight + this.margins.top + this.margins.bottom;
+    this.chartElement.nativeElement.style.height = (height > 400 ? 400:height)+'px';
+  }
+
+  private displayNoChartInfo() {
+    // Always get rid of the message if there was one!
+    this.svg.select('.account-no-chart').remove();
+
+    if (this._accounts.length === 0){
+      var t = d3.transition().duration(750);
+      this.svg
+        .append("text")
+          .attr("x", this.chartElement.nativeElement.clientWidth/2)
+          .attr("text-align", "center")
+          .attr("text-anchor", "middle")
+          .attr("class", "account-no-chart")
+          .style("font-family", "Verdana, Arial, Helvetica, sans-serif")
+          .style("font-size", "9pt")
+          .attr("fill", "#999")
+          .text("There are no accounts to display!")
+        .transition(t)
+          .attr("y", this.chartElement.nativeElement.clientHeight/2);
+    }
   }
 
   private createChart() {
@@ -101,97 +100,106 @@ export class AccountsChartComponent implements AfterViewInit {
       .attr("width", "100%")
       .attr("height", "100%");
 
-    // Set the width of the chart to whatever size we do need.
-    // If this width becomes larger than its parent container, this one has an overflow setup to scroll horizontally
-    const innerChartWidth = this.client.accounts.length > 0 ? this.client.accounts.length*(this.barWidth+10) : this.margins.left;
-    this.chartElement.nativeElement.style.width = (innerChartWidth+this.margins.left+this.margins.right)+'px';
+    // This is the amount of vertical space we need for the chart
+    const chartInnerHeight = this.getChartInnerHeight();
 
-    // X Scale
-    this.x = d3.scaleBand()
-              .domain(this.client.accounts.map(a => a.number.toString()))
-              .range([this.margins.left, innerChartWidth])
-              .padding(0.2);
+    // Adjust chart height
+    this.adjustChartHeight(chartInnerHeight);
 
-    // Y Scale
-    const balances = this.client.accounts.map(a => a.balance);
-    var max_value = Math.max(0, ...balances);   // if all balances are negative, make sure 0 is the max
-    var min_value = Math.min(0, ...balances);   // if all balances are positive, make sure 0 is the min
-    this.y = d3.scaleLinear()
-              .domain([min_value, max_value])
-              .range([this.chartElement.nativeElement.clientHeight-this.margins.bottom, this.margins.top]);
-  }  
+    // X/Y Scales
+    this.x = d3.scaleLinear()
+            .domain([this.chartData.minValue, this.chartData.maxValue])
+            .range([this.margins.left, this.chartElement.nativeElement.clientWidth-this.margins.right]);
+  
+    this.y = d3.scaleBand()
+          .domain(this.accounts.map(a => a.number.toString()))
+          .range([this.margins.top, chartInnerHeight])
+          .padding(0.1);
 
-  private drawAxis() {
     // X Axis
     this.svg.append("g")
       .attr("class", "xaxis")
-      .attr("transform", `translate(0,${this.y(0)})`)
-      .call(d3.axisBottom(this.x).tickSize(0).tickPadding(6))
-      // ensure negative bars have their labels above the axis line
-      .call((g:any) => g.selectAll(".tick text")
-                  .filter((_:any, i:number) => this.client.accounts[i].balance < 0)
-                  .attr("transform", "translate(0,-20)"));
-
+      .style("opacity", this.accounts.length === 0 ? 0:1)
+      .attr("transform", `translate(0,${chartInnerHeight})`)
+      .call(d3.axisBottom(this.x))
+      .selectAll("text")
+        .attr("transform", "translate(-10,0)rotate(-45)")
+        .style("text-anchor", "end");
+  
     // Y Axis
     this.svg.append("g")
-      .attr("transform", `translate(${this.margins.left},0)`)
-      .call(d3.axisLeft(this.y).tickFormat((y:any) => y.toFixed()))
-      .call((g:any) => g.append("text")
-          .attr("x", -this.margins.left)
-          .attr("y", 10)
-          .attr("fill", "currentColor")
-          .attr("text-anchor", "start")
-          .text("Account Balance"));
-  }
+      .attr("class", "yaxis")
+      .style("opacity", this.accounts.length === 0 ? 0:1)
+      .attr("transform", `translate(${this.x(0)}, 0)`)
+      .call(d3.axisLeft(this.y).tickSize(0))
+      .call((g:any) => g.selectAll(".tick text")
+                  .filter((_:any, i:number) => this.accounts[i].balance < 0)
+                  .attr("transform", "translate(8,0)")
+                  .style("text-anchor", "start")
+          );
+
+
+    this.drawBars();
+    this.displayNoChartInfo();
+  }  
+
+
+  private updateChart() {
+    var chartInnerHeight = this.getChartInnerHeight();
+    this.y.domain(this.accounts.map(a => a.number.toString()))
+    this.y.range([this.margins.top, chartInnerHeight]);
+
+    // Readjust the chart's height
+    this.adjustChartHeight(chartInnerHeight);
+
+    var t = d3.transition().duration(750);
   
+    this.svg.selectAll(".xaxis")
+      .transition(t)
+      .attr("transform", `translate(0,${chartInnerHeight})`)
+      .style("opacity", this.accounts.length === 0 ? 0:1)
+  
+    this.svg.selectAll(".yaxis")
+      .transition(t)
+      .style("opacity", this.accounts.length === 0 ? 0:1)
+      .call(d3.axisLeft(this.y));
+  
+    this.drawBars();
+    this.displayNoChartInfo();
+  }
+
+
   private barColor(account: Account) {
     return this.cardTypeColors[account.card_type]||this.unknownCardTypeColor;
   }
   
-  private drawBars(accounts: Account[], reason?:string) {
-    const y0 = this.y(0);
   
-    var bars = this.svg.selectAll("rect.bar").data(accounts);
-  
-    bars
-      .enter()
+  private drawBars() {
+    const x0 = this.x(0);
+
+    // In essence we're each time rebuilding the entire chart: some bar are new,
+    // some need to be removed and others are still there, but maybe at a different
+    // location on the band axis...
+    // Our data is keyed by 'id' and we can't tell if an element with a given id
+    // and in both the old and new datasets is at the same place on the chart.
+    // Kinda the easiest here is to just remove all bars and recreate the chart.
+    // It's not that bad With some animation...
+    // 
+    this.svg.selectAll("rect.bar").remove();
+
+    const t = d3.transition().duration(750);
+    const bars = this.svg.selectAll("rect.bar")
+                  .data(this.accounts, function(a:Account) { return a.id; });
+
+    // Enter new elements
+    bars.enter()
       .append("rect")
         .attr("class", "bar")
-        .attr("x", (account:Account) => this.x(account.number.toString()))
-        .attr("width", this.x.bandwidth())
-        .attr("fill", (account:Account) => this.barColor(account))
-        .attr("height", 0)    // no bar at the beginning
-        .attr("y", (account:Account) => y0);
-  
-    bars.exit().remove();
-  
-    // Animation
-    this.svg.selectAll("rect.bar")
-      .transition()
-      .duration(300)
-      .attr("y", (account:Account) => account.balance < 0 ? y0 : this.y(account.balance))
-      .attr("height", (account:Account) => Math.abs(this.y(account.balance)-y0))
-      .delay((_:any,i:number) => i*100);
-  
-    
-    // if (reason === 'neg-balanaces-over') {
-    //   this.svg.selectAll("rect.bar")
-    //     .transition()
-    //     .duration(500)
-    //     .attr("fill", (account:Account) => account.balance < 0 ? this.barColor(account) : "#f0f0f0");
-    // }
-    // else if (reason === 'pos-balanaces-over') {
-    //   this.svg.selectAll("rect.bar")
-    //     .transition()
-    //     .duration(500)
-    //     .attr("fill", (account:Account) => account.balance > 0 ? this.barColor(account) : "#f0f0f0");
-    // }
-    // else if (reason === 'reset-balanaces') {
-    //   this.svg.selectAll("rect.bar")
-    //     .transition()
-    //     .duration(500)
-    //     .attr("fill", (account:Account) => this.barColor(account));
-    // }
+        .attr("y", (a:Account) => this.y(a.number.toString()))
+        .attr("height", this.y.bandwidth())
+        .attr("fill", (a:Account) => this.barColor(a))
+        .attr("x", (a:Account) => a.balance >= 0 ? x0 : this.x(a.balance))
+      .transition(t)
+        .attr("width", (a:Account) => Math.abs(this.x(a.balance)-x0));
   }
-  
 }

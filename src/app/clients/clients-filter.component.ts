@@ -31,7 +31,7 @@ export class ClientsFilterComponent {
     }
   }
 
-  filterClients(text: string) {
+  private filterClients(text: string) {
     const lowText = text.toLowerCase();
     const clients = this._clients.filter(c => `${c.firstname||''} ${c.name}`.toLowerCase().includes(lowText))
     this.setClients.emit(clients);
