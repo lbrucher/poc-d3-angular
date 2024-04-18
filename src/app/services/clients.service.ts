@@ -4,6 +4,8 @@ import { Observable } from 'rxjs';
 import { Account } from '../models/account';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../environnements/environnement';
+import { CardType } from '../models/card-type';
+import { ClientsData } from '../models/clients-data';
 
 // export so it can be reused in tests
 export interface ClientRaw {
@@ -16,6 +18,12 @@ export interface ClientRaw {
   accounts: string[];
 }
 
+const cardTypes: CardType[] = [
+  new CardType('VISA', '#024C8C'),
+  new CardType('MasterCard', '#F0991B'),
+  new CardType('American Express', '#9BCAA7')
+];
+
 
 @Injectable({
   providedIn: 'root'
@@ -27,10 +35,11 @@ export class ClientsService {
     return `${environment.apiUrl}${path}`;
   } 
 
-  getClients(): Observable<Client[]> {
+
+  getClients(): Observable<ClientsData> {
     // Since we always fetch the entire list of clients and we know we'll also need their corresponding account info
     // we'll also fetch accounts right here.
-    return new Observable<Client[]>(sub => {
+    return new Observable<ClientsData>(sub => {
       // Fetch all clients first
       this.http.get<ClientRaw[]>(this.makeUrl('/clients')).subscribe({
         next: (rawClients) => {
@@ -46,7 +55,8 @@ export class ClientsService {
                 return new Client(c.id, c.name, c.firstname, c.address, c.created, c.birthday, clientAccounts);
               });
 
-              sub.next(clients);
+              // TODO cardTypes should normally come from the backend as well.
+              sub.next(new ClientsData(clients, cardTypes));
             },
             error: (err) => sub.error(err)
           });

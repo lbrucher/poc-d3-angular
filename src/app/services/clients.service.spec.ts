@@ -5,6 +5,8 @@ import { ClientsService, ClientRaw } from './clients.service';
 import { Client } from '../models/client';
 import { environment } from '../environnements/environnement';
 import { Account } from '../models/account';
+import { CardType } from '../models/card-type';
+import { ClientsData } from '../models/clients-data';
 
 class TestClient implements ClientRaw {
   id: string;
@@ -25,6 +27,12 @@ class TestClient implements ClientRaw {
     this.accounts = accounts;
   }
 }
+
+const cardTypes: CardType[] = [
+  new CardType('VISA', '#024C8C'),
+  new CardType('MasterCard', '#F0991B'),
+  new CardType('American Express', '#9BCAA7')
+];
 
 describe('ClientsService', () => {
   let httpTestingController: HttpTestingController;
@@ -62,8 +70,10 @@ describe('ClientsService', () => {
       new Client('C3', 'Client3', 'Test3', 'client3 address', '2024-01-03', '1992-01-01', [serverAccounts[0], serverAccounts[1]]),
     ]
 
-    service.getClients().subscribe(clients => {
-      expect(clients).toEqual(expectedClients);
+    const expectedClientsData = new ClientsData(expectedClients, cardTypes);
+
+    service.getClients().subscribe(clientsData => {
+      expect(clientsData).toEqual(expectedClientsData);
     });
 
     const reqClients = httpTestingController.expectOne(`${environment.apiUrl}/clients`);

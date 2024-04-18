@@ -1,6 +1,9 @@
-//TODO this should ideally come from the backend...
-export const CardTypes = [
-  "VISA",
-  "MasterCard",
-  "American Express",
-];
+export class CardType {
+  name: string;
+  color: string;
+
+  constructor(name:string, color:string){
+    this.name = name;
+    this.color = color;
+  }
+}

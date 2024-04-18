@@ -14,7 +14,7 @@
 
     <ul>
       <li *ngFor="let client of filteredClients">
-        <app-client [client]="client"></app-client>
+        <app-client [client]="client" [cardTypes]="cardTypes"></app-client>
       </li>
     </ul>
   </div>

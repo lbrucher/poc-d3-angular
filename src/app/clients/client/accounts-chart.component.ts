@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import * as d3 from 'd3';
 import { Client } from '../../models/client';
 import { Account } from '../../models/account';
-import { CardTypes } from '../../models/card-type';
+import { CardType } from '../../models/card-type';
 
 class LegendItem {
   type: string;
@@ -23,6 +23,7 @@ class LegendItem {
 })
 export class AccountsChartComponent implements AfterViewInit {
   @Input('client') client!: Client;
+  @Input('cardTypes') cardTypes!: CardType[];
   @Output('chartClicked') chartClicked = new EventEmitter();
   @ViewChild('accountChart') chartElement!: ElementRef;
 
@@ -34,8 +35,6 @@ export class AccountsChartComponent implements AfterViewInit {
   private margins = {top:30, right:10, bottom:20, left:50};
   private barWidth = 100;
   
-  //TODO what if we have more card types than the colors defined here?
-  private allCardTypeColors = ['#024C8C', '#F0991B', '#9BCAA7', 'red', 'blue', 'green'];
   private unknownCardTypeColor = '#999';
   private cardTypeColors: any = {};
   
@@ -44,16 +43,13 @@ export class AccountsChartComponent implements AfterViewInit {
   legendItems: LegendItem[] = [];
 
 
-  constructor() {
-    const colors = this.allCardTypeColors.slice(0);
-    for (const type of CardTypes) {
-      this.cardTypeColors[type] = colors.shift();
-      this.selectedCardTypes[type] = true;  // all types selected by default
-      this.legendItems.push(new LegendItem(type, this.cardTypeColors[type]));
-    }
-  }
-
   ngAfterViewInit(): void {
+    for(const ct of this.cardTypes||[]){
+      this.cardTypeColors[ct.name] = ct.color;
+      this.selectedCardTypes[ct.name] = true;  // all types selected by default
+      this.legendItems.push(new LegendItem(ct.name, ct.color));
+    }
+
     this.createChart();
     this.drawAxis();
     this.drawBars(this.client.accounts);

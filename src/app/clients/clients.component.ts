@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { ClientComponent } from './client/client.component';
 import { ClientsService } from '../services/clients.service';
 import { HttpClientModule } from '@angular/common/http';
+import { CardType } from '../models/card-type';
 
 @Component({
   selector: 'app-clients',
@@ -20,6 +21,7 @@ import { HttpClientModule } from '@angular/common/http';
 })
 export class ClientsComponent implements OnInit {
   clients: Client[] = [];
+  cardTypes: CardType[] = [];
   filteredClients: Client[] = [];
   loadingClient: boolean = true;
   loadError: string|null = null;
@@ -30,8 +32,9 @@ export class ClientsComponent implements OnInit {
   ngOnInit(): void {
     this.loadError = null;
     this.clientService.getClients().subscribe({
-      next: (clients) => {
-        this.clients = clients || [];
+      next: (clientsData) => {
+        this.clients = clientsData.clients || [];
+        this.cardTypes = clientsData.cardTypes || [];
         this.filteredClients = this.clients.slice(0);
         this.loadingClient = false;
       },

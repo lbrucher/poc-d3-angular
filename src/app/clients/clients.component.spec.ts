@@ -4,6 +4,7 @@ import { ClientsComponent } from './clients.component';
 import { ClientsService } from '../services/clients.service';
 import { Client } from '../models/client';
 import { Observable } from 'rxjs';
+import { ClientsData } from '../models/clients-data';
 
 describe('ClientsComponent', () => {
   let component: ClientsComponent;
@@ -27,8 +28,8 @@ describe('ClientsComponent', () => {
 
 
   it('should display an error message when an error retrieving clients occurred', () => {
-    clientsServiceStub.getClients = ():Observable<Client[]> => {
-      return new Observable<Client[]>(sub => {
+    clientsServiceStub.getClients = ():Observable<ClientsData> => {
+      return new Observable<ClientsData>(sub => {
         throw new Error("BLAH");
       });
     };
@@ -39,9 +40,9 @@ describe('ClientsComponent', () => {
   });
 
   it('should display a loading message while retrieving the clients information', () => {
-    clientsServiceStub.getClients = ():Observable<Client[]> => {
-      return new Observable<Client[]>(sub => {
-        setTimeout(() => sub.next([]), 1000);
+    clientsServiceStub.getClients = ():Observable<ClientsData> => {
+      return new Observable<ClientsData>(sub => {
+        setTimeout(() => sub.next({clients:[], cardTypes:[]}), 1000);
       });
     };
     fixture.detectChanges();
@@ -51,12 +52,15 @@ describe('ClientsComponent', () => {
   });
 
   it('should display clients information on success', () => {
-    clientsServiceStub.getClients = ():Observable<Client[]> => {
-      return new Observable<Client[]>(sub => sub.next([
-        {id:'C1', name:'Test Client1', firstname:null, address:'Client1 address', created:'2024-01-01', birthday:'1990-01-01', accounts:[]} as Client,
-        {id:'C2', name:'Test Client2', firstname:null, address:'Client2 address', created:'2024-01-02', birthday:'1991-01-01', accounts:[]} as Client,
-        {id:'C3', name:'Test Client3', firstname:null, address:'Client3 address', created:'2024-01-02', birthday:'1991-01-01', accounts:[]} as Client,
-      ]));
+    clientsServiceStub.getClients = ():Observable<ClientsData> => {
+      return new Observable<ClientsData>(sub => sub.next({
+        clients:[
+          {id:'C1', name:'Test Client1', firstname:null, address:'Client1 address', created:'2024-01-01', birthday:'1990-01-01', accounts:[]} as Client,
+          {id:'C2', name:'Test Client2', firstname:null, address:'Client2 address', created:'2024-01-02', birthday:'1991-01-01', accounts:[]} as Client,
+          {id:'C3', name:'Test Client3', firstname:null, address:'Client3 address', created:'2024-01-02', birthday:'1991-01-01', accounts:[]} as Client,
+        ],
+        cardTypes:[]
+      }));
     };
     fixture.detectChanges();
 

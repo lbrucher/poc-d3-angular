@@ -5,6 +5,7 @@ import { AccountsChartComponent } from './accounts-chart.component';
 import { Account } from '../../models/account';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AccountsPopupComponent } from './accounts-popup.component';
+import { CardType } from '../../models/card-type';
 
 class BalanceRep {
   percent: number;
@@ -40,6 +41,8 @@ class BalanceRepartitions {
 })
 export class ClientComponent {
   balancesRep: BalanceRepartitions = new BalanceRepartitions([]);
+
+  @Input('cardTypes') cardTypes!: CardType[];
 
   private _client!: Client;
   @Input('client')
