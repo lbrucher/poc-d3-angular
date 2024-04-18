@@ -4,6 +4,7 @@ import { ClientsFilterComponent } from './clients-filter.component';
 import { CommonModule } from '@angular/common';
 import { ClientComponent } from './client/client.component';
 import { ClientsService } from '../services/clients.service';
+import { HttpClientModule } from '@angular/common/http';
 
 @Component({
   selector: 'app-clients',
@@ -11,7 +12,8 @@ import { ClientsService } from '../services/clients.service';
   imports: [
     CommonModule,
     ClientsFilterComponent,
-    ClientComponent
+    ClientComponent,
+    HttpClientModule
   ],
   templateUrl: './clients.component.html',
   styleUrl: './clients.component.scss'
@@ -22,7 +24,6 @@ export class ClientsComponent implements OnInit {
   loadingClient: boolean = true;
 
   constructor(private clientService: ClientsService) {
-//    this.clients = null;
   }
 
   ngOnInit(): void {

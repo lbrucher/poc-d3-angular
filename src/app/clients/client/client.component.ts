@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { Client } from '../../models/client';
 import { AccountsChartComponent } from './accounts-chart.component';
 import { Account } from '../../models/account';
-import { AccountsService } from '../../services/accounts.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AccountsPopupComponent } from './accounts-popup.component';
 
@@ -37,19 +36,19 @@ class BalanceRepartitions {
   templateUrl: './client.component.html',
   styleUrl: './client.component.scss'
 })
-export class ClientComponent implements OnInit {
-  @Input('client') client!: Client;
+export class ClientComponent {
   balancesRep: BalanceRepartitions = new BalanceRepartitions([]);
-  accounts: Account[] = [];
 
-  constructor(private accountService: AccountsService, private modalService: NgbModal){
+  private _client!: Client;
+  @Input('client')
+  get client(): Client { return this._client; }
+  set client(client: Client) {
+    this._client = client;
+    this.balancesRep = new BalanceRepartitions(client.accounts);
   }
 
-  ngOnInit(): void {
-    this.accountService.getAccounts(this.client.accounts).subscribe(accounts => {
-      this.accounts = accounts;
-      this.balancesRep = new BalanceRepartitions(this.accounts);
-    });
+
+  constructor(private modalService: NgbModal){
   }
 
   getClientName(): string {
@@ -73,7 +72,6 @@ export class ClientComponent implements OnInit {
   showAccountDetails() {
     const modalRef = this.modalService.open(AccountsPopupComponent, {size:'lg'});
     modalRef.componentInstance.client = this.client;
-    modalRef.componentInstance.accounts = this.accounts;
     modalRef.componentInstance.clientName = this.getClientName();
   }
 

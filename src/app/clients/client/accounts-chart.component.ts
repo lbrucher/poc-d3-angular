@@ -23,7 +23,6 @@ class LegendItem {
 })
 export class AccountsChartComponent implements AfterViewInit {
   @Input('client') client!: Client;
-  @Input('accounts') accounts!: Account[];
   @Output('chartClicked') chartClicked = new EventEmitter();
   @ViewChild('accountChart') chartElement!: ElementRef;
 
@@ -57,7 +56,7 @@ export class AccountsChartComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     this.createChart();
     this.drawAxis();
-    this.drawBars(this.accounts);
+    this.drawBars(this.client.accounts);
   }
 
 
@@ -82,7 +81,7 @@ export class AccountsChartComponent implements AfterViewInit {
     elInput.checked = this.selectedCardTypes[cardType];
 
     // Rebuild the list of accounts to display
-    const accounts = this.accounts.filter(a => this.selectedCardTypes[a.card_type]);
+    const accounts = this.client.accounts.filter(a => this.selectedCardTypes[a.card_type]);
 
 //TODO not properly redrawn... 
     this.x.domain(accounts.map(a => a.number.toString()))
@@ -108,17 +107,17 @@ export class AccountsChartComponent implements AfterViewInit {
 
     // Set the width of the chart to whatever size we do need.
     // If this width becomes larger than its parent container, this one has an overflow setup to scroll horizontally
-    const innerChartWidth = this.accounts.length > 0 ? this.accounts.length*(this.barWidth+10) : this.margins.left;
+    const innerChartWidth = this.client.accounts.length > 0 ? this.client.accounts.length*(this.barWidth+10) : this.margins.left;
     this.chartElement.nativeElement.style.width = (innerChartWidth+this.margins.left+this.margins.right)+'px';
 
     // X Scale
     this.x = d3.scaleBand()
-              .domain(this.accounts.map(a => a.number.toString()))
+              .domain(this.client.accounts.map(a => a.number.toString()))
               .range([this.margins.left, innerChartWidth])
               .padding(0.2);
 
     // Y Scale
-    const balances = this.accounts.map(a => a.balance);
+    const balances = this.client.accounts.map(a => a.balance);
     var max_value = Math.max(0, ...balances);
     var min_value = Math.min(0, ...balances);
     this.y = d3.scaleLinear()
@@ -133,7 +132,7 @@ export class AccountsChartComponent implements AfterViewInit {
       .attr("transform", `translate(0,${this.y(0)})`)
       .call(d3.axisBottom(this.x).tickSize(0).tickPadding(6))
       .call((g:any) => g.selectAll(".tick text")
-                  .filter((_:any, i:number) => this.accounts[i].balance < 0)
+                  .filter((_:any, i:number) => this.client.accounts[i].balance < 0)
                   .attr("transform", "translate(0,-20)"));
 
     // Y Axis

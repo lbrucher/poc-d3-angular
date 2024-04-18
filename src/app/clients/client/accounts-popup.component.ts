@@ -15,7 +15,6 @@ import { Account } from '../../models/account';
 })
 export class AccountsPopupComponent {
   @Input('client') client!: Client;
-  @Input('accounts') accounts!: Account[];
   @Input('clientName') clientName!: string;
 
   getCreationDate(account:Account){
