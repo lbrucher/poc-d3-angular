@@ -32,6 +32,8 @@ $ npm run e2e
 
 # Deviation from the original description
 
+See [Frontend Engineer Assessment.pdf](docs/Frontend Engineer Assessment (3).pdf).
+
 * Display of client info (id, name, etc.)
 * Removed pie chart, display name in red for clients with one or more accounts with a negative balance
 * Added nav bar
