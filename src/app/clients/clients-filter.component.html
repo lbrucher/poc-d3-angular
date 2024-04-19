@@ -1,14 +1,3 @@
-<div *ngIf="clients" class="dropdown">
-  <div class="btn-group" role="group">
-    <input placeholder="Filter clients..." size="16" type="text" [(ngModel)]="inputText" (keypress)="inputTextKeyPressed($event)">
-    <div class="btn-group" role="group">
-      <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-        <span class="caret"></span>
-      </button>
-      <ul class="dropdown-menu">
-        <li><a class="dropdown-item" href="#">Dropdown link</a></li>
-        <li><a class="dropdown-item" href="#">Dropdown link</a></li>
-      </ul>
-    </div>
-  </div>
+<div *ngIf="clients" class="filter-clients">
+  <input placeholder="Filter clients..." type="text" [(ngModel)]="inputText" (keypress)="inputTextKeyPressed($event)" style="width:100%; font-size:90%;">
 </div>
