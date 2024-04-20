@@ -14,6 +14,12 @@ class LegendItem {
   }
 }
 
+export enum ChartHighlights {
+  NONE,
+  POSITIVES,
+  NEGATIVES
+};
+
 @Component({
   selector: 'app-accounts-chart',
   standalone: true,
@@ -26,6 +32,15 @@ export class AccountsChartComponent implements AfterViewInit {
   @Input('cardTypes') cardTypes!: CardType[];
   @Output('chartClicked') chartClicked = new EventEmitter();
   @ViewChild('accountChart') chartElement!: ElementRef;
+
+  private whatToHightligh: ChartHighlights = ChartHighlights.NONE;
+  @Input('highlight')
+  set hightlight(hl:ChartHighlights){
+    if (this.whatToHightligh !== hl) {
+      this.whatToHightligh = hl;
+      this.updateHighLights();
+    }
+  }
 
   private svg: any;
   private x: any;   // x scale
@@ -79,7 +94,6 @@ export class AccountsChartComponent implements AfterViewInit {
     // Rebuild the list of accounts to display
     const accounts = this.client.accounts.filter(a => this.selectedCardTypes[a.card_type]);
 
-//TODO not properly redrawn... 
     this.x.domain(accounts.map(a => a.number.toString()))
     this.svg
       .selectAll(".xaxis")
@@ -145,12 +159,25 @@ export class AccountsChartComponent implements AfterViewInit {
   }
   
   private barColor(account: Account) {
-    return this.cardTypeColors[account.card_type]||this.unknownCardTypeColor;
+    const color = this.cardTypeColors[account.card_type]||this.unknownCardTypeColor;
+
+    if (this.whatToHightligh === ChartHighlights.NEGATIVES) {
+      return account.balance < 0 ? color : "#f0f0f0";
+    }
+    else if (this.whatToHightligh === ChartHighlights.POSITIVES) {
+      return account.balance > 0 ? color : "#f0f0f0";
+    }
+    else {
+      return color;
+    }
   }
   
   private drawBars(accounts: Account[], reason?:string) {
     const y0 = this.y(0);
-  
+
+    // Remove all bars first
+    this.svg.selectAll("rect.bar").remove();
+
     var bars = this.svg.selectAll("rect.bar").data(accounts);
   
     bars
@@ -172,26 +199,12 @@ export class AccountsChartComponent implements AfterViewInit {
       .attr("y", (account:Account) => account.balance < 0 ? y0 : this.y(account.balance))
       .attr("height", (account:Account) => Math.abs(this.y(account.balance)-y0))
       .delay((_:any,i:number) => i*100);
-  
-    
-    // if (reason === 'neg-balanaces-over') {
-    //   this.svg.selectAll("rect.bar")
-    //     .transition()
-    //     .duration(500)
-    //     .attr("fill", (account:Account) => account.balance < 0 ? this.barColor(account) : "#f0f0f0");
-    // }
-    // else if (reason === 'pos-balanaces-over') {
-    //   this.svg.selectAll("rect.bar")
-    //     .transition()
-    //     .duration(500)
-    //     .attr("fill", (account:Account) => account.balance > 0 ? this.barColor(account) : "#f0f0f0");
-    // }
-    // else if (reason === 'reset-balanaces') {
-    //   this.svg.selectAll("rect.bar")
-    //     .transition()
-    //     .duration(500)
-    //     .attr("fill", (account:Account) => this.barColor(account));
-    // }
   }
-  
+
+  private updateHighLights() {
+    this.svg.selectAll("rect.bar")
+      .transition()
+      .duration(300)
+      .attr("fill", (account:Account) => this.barColor(account));
+  }
 }

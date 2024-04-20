@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Client } from '../../models/client';
-import { AccountsChartComponent } from './accounts-chart.component';
+import { AccountsChartComponent, ChartHighlights } from './accounts-chart.component';
 import { Account } from '../../models/account';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AccountsPopupComponent } from './accounts-popup.component';
@@ -44,6 +44,7 @@ class BalanceRepartitions {
 export class ClientComponent {
   balancesRep: BalanceRepartitions = new BalanceRepartitions([]);
   balancesPieData: BalancesPieData = new BalancesPieData();
+  whatToHighlight: ChartHighlights = ChartHighlights.NONE;
 
   @Input('cardTypes') cardTypes!: CardType[];
 
@@ -90,7 +91,14 @@ export class ClientComponent {
   }
 
   onPieSliceClicked(slice:number) {
-
-console.log("Slice clicked: ", slice);
+    if (slice == null){
+      this.whatToHighlight = ChartHighlights.NONE;
+    }
+    else if (slice > 0){
+      this.whatToHighlight = ChartHighlights.POSITIVES;
+    }
+    else if (slice < 0){
+      this.whatToHighlight = ChartHighlights.NEGATIVES;
+    }
   }
 }

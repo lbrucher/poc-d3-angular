@@ -21,6 +21,6 @@
 
   <div class="col accounts">
     <div class=" account-details" (click)="showAccountDetails()">Account Details...</div>
-    <app-accounts-chart [client]="client" [cardTypes]="cardTypes" (chartClicked)="onChartClicked()"></app-accounts-chart>
+    <app-accounts-chart [client]="client" [cardTypes]="cardTypes" [highlight]="whatToHighlight" (chartClicked)="onChartClicked()"></app-accounts-chart>
   </div>
 </div>
