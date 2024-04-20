@@ -1,6 +1,6 @@
 <div class="client row g-0">
 
-  <div class="col-5">
+  <div class="col-3">
     <div class="client-info">
       <div *ngIf="balancesRep.negative.count == 0" class="name">{{getClientName()}}</div>
       <div *ngIf="balancesRep.negative.count > 0" class="name error" title="{{balancesRep.negative.count}} account{{balancesRep.negative.count > 1 ? 's':''}} {{balancesRep.negative.count > 1 ? 'have':'has'}} a negative balance ({{balancesRep.negative.percent|percent}})">
@@ -12,6 +12,10 @@
       </div>
       <div class="address" *ngIf="client.address">{{client.address}}</div>
       <div class="dob" *ngIf="hasDoB()">Born on {{getClientDoB()}}</div>
+    </div>
+
+    <div class="balances-pie">
+      <app-balances-pie [data]="balancesPieData" (sliceClicked)="onPieSliceClicked($event)"></app-balances-pie>
     </div>
   </div>
 

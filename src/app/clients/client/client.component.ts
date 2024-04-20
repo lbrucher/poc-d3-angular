@@ -6,6 +6,7 @@ import { Account } from '../../models/account';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AccountsPopupComponent } from './accounts-popup.component';
 import { CardType } from '../../models/card-type';
+import { BalancesPieComponent, BalancesPieData } from './balances-pie.component';
 
 class BalanceRep {
   percent: number;
@@ -35,12 +36,14 @@ class BalanceRepartitions {
   imports: [
     CommonModule,
     AccountsChartComponent,
+    BalancesPieComponent,
   ],
   templateUrl: './client.component.html',
   styleUrl: './client.component.scss'
 })
 export class ClientComponent {
   balancesRep: BalanceRepartitions = new BalanceRepartitions([]);
+  balancesPieData: BalancesPieData = new BalancesPieData();
 
   @Input('cardTypes') cardTypes!: CardType[];
 
@@ -50,6 +53,8 @@ export class ClientComponent {
   set client(client: Client) {
     this._client = client;
     this.balancesRep = new BalanceRepartitions(client.accounts);
+    this.balancesPieData.positiveBalances = this.balancesRep.positive.count;
+    this.balancesPieData.negativeBalances = this.balancesRep.negative.count;
   }
 
 
@@ -82,5 +87,10 @@ export class ClientComponent {
 
   onChartClicked() {
     this.showAccountDetails();
+  }
+
+  onPieSliceClicked(slice:number) {
+
+console.log("Slice clicked: ", slice);
   }
 }
