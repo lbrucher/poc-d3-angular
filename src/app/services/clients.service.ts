@@ -56,8 +56,7 @@ export class ClientsService {
               });
 
               // TODO cardTypes should normally come from the backend as well.
-//              sub.next(new ClientsData(clients, cardTypes));
-              sub.next(new ClientsData(clients.slice(6,7), cardTypes));
+              sub.next(new ClientsData(clients, cardTypes));
             },
             error: (err) => sub.error(err)
           });

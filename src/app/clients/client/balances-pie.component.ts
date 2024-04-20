@@ -31,16 +31,21 @@ export class BalancesPieComponent implements AfterViewInit {
       {id:+1, name:'>=0', value:data.positiveBalances},
       {id:-1, name:'<0', value:data.negativeBalances}
     ]
+
+    this.showPie = data.positiveBalances > 0 || data.negativeBalances > 0;
   }
-    
+
   private svg: any;
   private selectedSlice: PieData|null = null;
   private sliceColors = ['#888', '#ccc'];
   private selectedSliceColor = '#3377FF';
 
+  showPie: boolean = false;
 
   ngAfterViewInit(): void {
-    this.createPie();
+    if (this.showPie) {
+      this.createPie();
+    }
   }
 
   private createPie() {
